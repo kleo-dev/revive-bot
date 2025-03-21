@@ -13,7 +13,7 @@ from os import environ as env
 TOKEN = env['TOKEN']
 MINUTES = 30
 ROLE = int(env['ROLE'])
-CHANNEL = None
+CHANNEL = int(env['CHANNEL_ID'])
 
 def decode(value):
     return b64decode(value).decode('utf-8')
