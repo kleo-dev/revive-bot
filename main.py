@@ -15,7 +15,7 @@ CUSTOM_CHANNELS = set([
 ])
 
 TOKEN = env['TOKEN']
-MINUTES = 10
+MINUTES = 30
 ROLE = int(env['ROLE'])
 CHANNELS = set([])
 
