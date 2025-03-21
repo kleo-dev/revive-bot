@@ -30,7 +30,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f"Logged in as {bot.user}")
     CHANNEL = bot.get_channel(int(env['CHANNEL_ID']))
-
+    await send_trivia()
     check_inactivity.start()
 
 active_trivia = {}  # Format: {message_id: {"correct_answer": answer, "count": 0}}
