@@ -45,7 +45,7 @@ async def check_inactivity():
             minutes_since = (current_time - message.created_at).total_seconds() / 60
             print(f"{datetime.now(timezone.utc).strftime('%H:%M:%S')} - Time since last message: {minutes_since} minutes")
             if minutes_since > MINUTES:
-
+                await send_trivia()
 
 
 @bot.event
