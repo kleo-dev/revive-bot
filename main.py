@@ -1,7 +1,5 @@
-import asyncio
 import discord
 from discord.ext import commands, tasks
-from discord import app_commands
 from datetime import datetime, timezone
 from base64 import b64decode
 import requests
@@ -71,17 +69,17 @@ async def on_message(message):
     if message.reference and message.reference.message_id in active_trivia:
         trivia_data = active_trivia[message.reference.message_id]
 
+        if message.author.id in trivia_data["replies"]:
+            return
+
         # Check answer
-        if message.content.lower() == trivia_data["correct_answer"]:
+        if message.content.lower().startswith(trivia_data["correct_answer"].lower()):
             await message.add_reaction("✅")
         else:
             await message.add_reaction("❌")
 
-        # Increment the count
-        trivia_data["count"] += 1
-
         # If we've reached max replies, remove this question from tracking
-        if trivia_data["count"] >= trivia_data["max_replies"]:
+        if len(trivia_data["replies"]) >= trivia_data["max_replies"]:
             del active_trivia[message.reference.message_id]
             print(f"{datetime.now(timezone.utc).strftime('%H:%M:%S')} - Removed trivia question ID {message.reference.message_id} after {trivia_data['max_replies']} replies")
 
@@ -99,7 +97,7 @@ async def send_trivia():
     shuffle(answers)
 
     role_mention = f"<@&{ROLE}>"
-    embedVar = discord.Embed(title=decoded_data['question'], description="", color=0x00ff00)
+    embedVar = discord.Embed(title=decoded_data['question'], description="Reply to answer", color=0x00ff00)
     embedVar.add_field(name="Difficulty", value=str(decoded_data['difficulty']).capitalize(), inline=False)
     embedVar.add_field(name="Answers", value='**'+('\n'.join(['- '+str(a) for a in answers]))+'**', inline=False)
     msg = await CHANNEL.send(role_mention, embed=embedVar)
@@ -107,7 +105,7 @@ async def send_trivia():
     # Store this question in our tracking dict
     active_trivia[msg.id] = {
         "correct_answer": str(decoded_data['correct_answer']).lower(),
-        "count": 0,
+        "replies": 0,
         "max_replies": 40
     }
     print(f"{datetime.now(timezone.utc).strftime('%H:%M:%S')} - Added trivia question ID {msg.id}")
