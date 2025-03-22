@@ -8,7 +8,7 @@ from os import environ as env
 
 # Channel ids
 TOKEN = env['TOKEN']
-MINUTES = 30
+MINUTES = 20
 ROLE = int(env['ROLE'])
 CHANNEL = None  # Global variable
 
