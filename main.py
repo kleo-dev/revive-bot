@@ -72,11 +72,12 @@ async def on_message(message):
         if message.author.id in trivia_data["replies"]:
             return
 
-        # Check answer
         if message.content.lower().startswith(trivia_data["correct_answer"].lower()):
             await message.add_reaction("✅")
         else:
             await message.add_reaction("❌")
+
+        trivia_data["replies"].append(message.author.id)
 
         # If we've reached max replies, remove this question from tracking
         if len(trivia_data["replies"]) >= trivia_data["max_replies"]:
@@ -105,7 +106,7 @@ async def send_trivia():
     # Store this question in our tracking dict
     active_trivia[msg.id] = {
         "correct_answer": str(decoded_data['correct_answer']).lower(),
-        "replies": 0,
+        "replies": [],
         "max_replies": 40
     }
     print(f"{datetime.now(timezone.utc).strftime('%H:%M:%S')} - Added trivia question ID {msg.id}")
